@@ -17,6 +17,7 @@ export default function Button({
   tagName,
   color = "bg-primary",
   animation = true,
+  ...props
 }) {
   if (size === "small") {
     sizeFeatures = "rounded-[4px] px-[18px] py-[10px]";
@@ -29,23 +30,29 @@ export default function Button({
   }
 
   const Animation = animation ? MotionDivDownToUp : "div";
-
   const CustomTagName = removeAnchor ? "div" : tagName || "a";
+  const handleClick = (e) => {
+    if (onClick) {
+      e.preventDefault(); // Evita que o link seja aberto antes da função onClick ser executada
+      onClick();
+    }
+  };
 
   return (
     <CustomTag
       tagName={CustomTagName}
       {...(removeTarget ? {} : { target: "_blank" })}
-      {...(removeAnchor ? {} : { href: buttonLink })}
+      {...(removeAnchor || onClick ? {} : { href: buttonLink })}
       className=""
+      onClick={handleClick}
     >
       <Animation>
         <button
-          onClick={onClick}
+          {...props}
           className={`flex ${className} ${sizeFeatures} flex-row items-center justify-around transition ${color} text-darker hover:scale-110`}
         >
           <div className={`flex items-center text-center ${gap} min-h-[24px]`}>
-            <div className="">{icon}</div>
+            {icon && <div>{icon}</div>}
             <p className={`flex items-center ${textclassName}`}>{label}</p>
           </div>
         </button>
